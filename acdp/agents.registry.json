@@ -11,6 +11,26 @@
         "lock",
         "architect"
       ]
+    },
+    "agent-02": {
+      "name": "Validation Executioner",
+      "type": "ai",
+      "public_key": "agent-02-pk",
+      "permissions": [
+        "read",
+        "write",
+        "lock"
+      ]
+    },
+    "agent-03": {
+      "name": "Animation Master",
+      "type": "ai",
+      "public_key": "agent-03-pk",
+      "permissions": [
+        "read",
+        "write",
+        "lock"
+      ]
     }
   }
 }

@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayName = document.getElementById('display-name');
     const logoutBtn = document.getElementById('logout-btn');
     const toastElem = document.getElementById('toast');
+    const themeToggleBtn = document.getElementById('theme-toggle');
 
     // DB / Notes Elements
     const addNoteBtn = document.getElementById('add-note-btn');
@@ -22,6 +23,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const DB_KEY = 'webapp_pcad_notes';
     let currentUser = null;
     let notes = [];
+
+    // --- Theme Initialization ---
+    initTheme();
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem('webapp_theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            if(themeToggleBtn) themeToggleBtn.textContent = '☀️';
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            if(themeToggleBtn) themeToggleBtn.textContent = '🌙';
+        }
+    }
+
+    if(themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('webapp_theme', 'light');
+                themeToggleBtn.textContent = '🌙';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('webapp_theme', 'dark');
+                themeToggleBtn.textContent = '☀️';
+            }
+        });
+    }
 
     // --- Initialization ---
     checkAuthSession();

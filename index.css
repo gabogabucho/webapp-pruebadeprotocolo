@@ -19,6 +19,20 @@
     --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Dark Theme Variables */
+[data-theme="dark"] {
+    --bg-color: #0f172a;
+    --surface-color: #1e293b;
+    --primary-color: #60a5fa;
+    --primary-hover: #93c5fd;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -1px rgba(0,0,0,0.2);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -2px rgba(0,0,0,0.2);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -31,6 +45,7 @@ body {
     color: var(--text-main);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    transition: background-color var(--transition-smooth), color var(--transition-smooth);
 }
 
 /* --- App View Transitions --- */
@@ -74,8 +89,12 @@ body {
 
 .btn-primary {
     background-color: var(--primary-color);
-    color: white;
+    color: #fff;
     box-shadow: 0 2px 4px rgba(59, 130, 246, 0.25);
+}
+
+[data-theme="dark"] .btn-primary {
+    color: #0f172a;
 }
 
 .btn-primary:hover {
@@ -95,7 +114,7 @@ body {
 }
 
 .btn-outline:hover {
-    background-color: #f1f5f9;
+    background-color: var(--border-color);
 }
 
 .btn-ghost {
@@ -104,7 +123,7 @@ body {
 }
 
 .btn-ghost:hover {
-    background-color: #f1f5f9;
+    background-color: var(--border-color);
     color: var(--text-main);
 }
 
@@ -121,7 +140,8 @@ body {
     background: var(--surface-color);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
-    border: 1px solid rgba(255,255,255,0.7);
+    border: 1px solid var(--border-color);
+    transition: background-color var(--transition-smooth), border-color var(--transition-smooth);
 }
 
 /* --- Login View --- */
@@ -131,15 +151,14 @@ body {
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+    background: linear-gradient(135deg, var(--bg-color) 0%, var(--border-color) 100%);
 }
 
 .login-card {
     width: 100%;
     max-width: 400px;
     padding: 2.5rem;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: var(--surface-color);
 }
 
 .card-header {
@@ -175,10 +194,12 @@ body {
     width: 100%;
     padding: 0.75rem 1rem;
     border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    color: var(--text-main);
     border-radius: var(--radius-md);
     font-family: inherit;
     font-size: 0.95rem;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-smooth);
 }
 
 .input-group input:focus {
@@ -206,6 +227,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 10;
+    transition: background-color var(--transition-smooth);
 }
 
 .header-content {
@@ -256,7 +278,7 @@ body {
 .role-badge {
     font-size: 0.7rem;
     color: var(--primary-color);
-    background-color: #eff6ff;
+    background-color: var(--border-color);
     padding: 0.1rem 0.4rem;
     border-radius: 12px;
     margin-top: 0.1rem;
@@ -291,7 +313,7 @@ body {
 .form-transition {
     margin-bottom: 1.5rem;
     padding: 1rem;
-    background-color: #f8fafc;
+    background-color: var(--bg-color);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
     animation: slideDown 0.3s ease forwards;
@@ -312,6 +334,8 @@ body {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    color: var(--text-main);
     border-radius: var(--radius-md);
     font-size: 0.95rem;
     font-family: inherit;
@@ -338,7 +362,7 @@ body {
 .note-item {
     padding: 1rem 1.25rem;
     border-radius: var(--radius-md);
-    background-color: white;
+    background-color: var(--surface-color);
     border: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -349,7 +373,7 @@ body {
 .note-item:hover {
     transform: translateX(4px);
     box-shadow: var(--shadow-sm);
-    border-color: #cbd5e1;
+    border-color: var(--text-muted);
 }
 
 .note-content p {
@@ -376,14 +400,17 @@ body {
 .delete-btn:hover {
     background: #fef2f2;
 }
+[data-theme="dark"] .delete-btn:hover {
+    background: #450a0a;
+}
 
 .empty-state {
     text-align: center;
     padding: 2rem;
     color: var(--text-muted);
-    background: #f8fafc;
+    background: var(--bg-color);
     border-radius: var(--radius-md);
-    border: 1px dashed #cbd5e1;
+    border: 1px dashed var(--border-color);
 }
 
 /* --- Toast --- */
@@ -392,7 +419,7 @@ body {
     bottom: 2rem;
     right: 2rem;
     background-color: var(--text-main);
-    color: white;
+    color: var(--surface-color);
     padding: 0.75rem 1.5rem;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);

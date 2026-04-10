@@ -1,0 +1,16 @@
+{
+  "$schema": "./messages.schema.json",
+  "agents": {
+    "antigravity": {
+      "name": "Antigravity Agent",
+      "type": "ai",
+      "public_key": "local-ai-agent-key",
+      "permissions": [
+        "read",
+        "write",
+        "lock",
+        "architect"
+      ]
+    }
+  }
+}

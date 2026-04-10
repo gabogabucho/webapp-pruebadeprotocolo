@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebApp PCAD Demo</title>
+    <!-- Modern Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <main id="app">
+        <!-- Toast Notifications -->
+        <div id="toast" class="toast hidden"></div>
+        
+        <!-- Login View -->
+        <section id="login-view" class="view active-view">
+            <div class="login-wrapper">
+                <div class="card login-card">
+                    <div class="card-header">
+                        <h2>Bienvenido</h2>
+                        <p>Ingresa para acceder a tu entorno local.</p>
+                    </div>
+                    <form id="login-form">
+                        <div class="input-group">
+                            <label for="username">Usuario</label>
+                            <input type="text" id="username" required placeholder="Ej. gabogabucho">
+                        </div>
+                        <div class="input-group">
+                            <label for="password">Contraseña</label>
+                            <input type="password" id="password" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
+                        <div class="demo-hints">
+                            <span class="hint-icon">💡</span>Cualquier usuario funciona en esta versión demo (Local DB).
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard View -->
+        <section id="dashboard-view" class="view hidden-view">
+            <header class="dashboard-header">
+                <div class="header-content">
+                    <div class="brand">
+                        <h1>WebApp PCAD</h1>
+                    </div>
+                    <div class="user-profile">
+                        <div class="avatar" id="avatar-initials">G</div>
+                        <div class="user-info">
+                            <span id="display-name">Usuario</span>
+                            <span class="role-badge">Admin</span>
+                        </div>
+                        <button id="logout-btn" class="btn btn-outline btn-small ml-4">Salir</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-body">
+                <div class="card panel">
+                    <div class="panel-header">
+                        <h3>Tus Notas (Local Storage)</h3>
+                        <button id="add-note-btn" class="btn btn-primary btn-small">+ Añadir</button>
+                    </div>
+                    
+                    <form id="new-note-form" class="hidden-view form-transition">
+                        <div class="new-note-inputs">
+                            <input type="text" id="note-title" placeholder="¿Qué estás pensando?" required autocomplete="off">
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-small">Guardar</button>
+                                <button type="button" id="cancel-note-btn" class="btn btn-ghost btn-small">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div id="notes-list" class="notes-list">
+                        <!-- Notes injected via JS -->
+                        <div class="empty-state">No hay notas todavía.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>

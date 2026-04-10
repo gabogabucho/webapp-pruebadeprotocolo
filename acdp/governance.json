@@ -1,0 +1,21 @@
+{
+  "$schema": "./messages.schema.json",
+  "project": "webapp-pruebadeprotocolo",
+  "roles": {
+    "owner": [
+      "antigravity"
+    ],
+    "maintainers": [
+      "antigravity"
+    ]
+  },
+  "rules": {
+    "override_locks": [
+      "owner",
+      "maintainers"
+    ],
+    "approve_protocol_changes": [
+      "owner"
+    ]
+  }
+}

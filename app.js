@@ -249,4 +249,68 @@ document.addEventListener('DOMContentLoaded', () => {
             }[tag])
         );
     }
+
+    // --- ACDP LIVE MONITOR POLLING LOGIC ---
+    let lastLogCount = 0;
+    const radarScreen = document.getElementById('radar-screen');
+    const radarPanel = document.getElementById('acdp-radar');
+    const radarToggle = document.getElementById('radar-toggle');
+
+    if(radarToggle) {
+        radarToggle.addEventListener('click', () => {
+            radarPanel.classList.toggle('closed');
+            radarToggle.textContent = radarPanel.classList.contains('closed') ? '📡' : '_';
+        });
+    }
+
+    function buildLogHTML(log) {
+        let colorClass = 'log-default';
+        let prefix = '➤';
+        if (log.type === 'intent') { colorClass = 'log-blue'; prefix = '💡'; }
+        if (log.type === 'lock') { colorClass = 'log-red'; prefix = '🔒'; }
+        if (log.type === 'release') { colorClass = 'log-green'; prefix = '🔓'; }
+        if (log.type === 'complete') { colorClass = 'log-yellow'; prefix = '✅'; }
+
+        const time = new Date(log.timestamp).toLocaleTimeString();
+        let payloadString = '';
+        if(log.payload.resource) payloadString += ` [${log.payload.resource}]`;
+        if(log.payload.description) payloadString += ` - ${log.payload.description}`;
+
+        return `<div class="radar-log slide-up ${colorClass}">
+                    <span class="log-time">[${time}]</span> 
+                    <strong>${log.agent_id}</strong> 
+                    ${prefix} <span style="font-weight:700;">${log.type.toUpperCase()}</span>${payloadString}
+                </div>`;
+    }
+
+    function fetchACDPLogs() {
+        fetch('/api/logs')
+            .then(res => res.json())
+            .then(data => {
+                if(data.length > lastLogCount) {
+                    // New Logs identified!
+                    const newLogs = data.slice(lastLogCount);
+                    newLogs.forEach(log => {
+                        radarScreen.insertAdjacentHTML('beforeend', buildLogHTML(log));
+                    });
+                    
+                    lastLogCount = data.length;
+                    radarScreen.scrollTop = radarScreen.scrollHeight; // Auto-scroll
+                    
+                    // Auto open radar if critical architecture event happens locally
+                    if(radarPanel && newLogs.some(l => ['lock', 'release', 'intent', 'complete'].includes(l.type))) {
+                       if (radarPanel.classList.contains('closed')) {
+                           radarPanel.classList.remove('closed');
+                           radarToggle.textContent = '_';
+                       }
+                    }
+                }
+            })
+            // Ignore fetch errors to prevent polluting user network tab if server is down
+            .catch(err => { /* Monitor server.js not running, gracefully degraded */ }); 
+    }
+
+    // Ping API every 1500 MS to detect any protocol events
+    setInterval(fetchACDPLogs, 1500);
+
 });

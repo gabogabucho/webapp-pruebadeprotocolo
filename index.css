@@ -353,10 +353,23 @@ body {
     gap: 0.5rem;
 }
 
+
+/* --- NOTES LIST ANIMATIONS (Task 3 Polish) --- */
+
 .notes-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+}
+
+@keyframes noteSlideIn {
+    0% { opacity: 0; transform: translateY(-30px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes noteSlideOut {
+    0% { opacity: 1; transform: scale(1) translateX(0); }
+    100% { opacity: 0; transform: scale(0.95) translateX(30px); }
 }
 
 .note-item {
@@ -368,6 +381,15 @@ body {
     justify-content: space-between;
     align-items: center;
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+/* Dynamically injected classes per app.js logical hooks */
+.note-item.slide-in {
+    animation: noteSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.note-item.slide-out {
+    animation: noteSlideOut 0.3s ease-in forwards;
 }
 
 .note-item:hover {
@@ -411,6 +433,9 @@ body {
     background: var(--bg-color);
     border-radius: var(--radius-md);
     border: 1px dashed var(--border-color);
+}
+.empty-state.delayed-fade {
+    animation: fadeIn 0.4s ease 0.3s both; /* Delay fade in when lists are emptied to not crash with slideOuts */
 }
 
 /* --- Toast --- */

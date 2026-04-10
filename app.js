@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboardView = document.getElementById('dashboard-view');
     const loginForm = document.getElementById('login-form');
     const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
     const avatarInitials = document.getElementById('avatar-initials');
     const displayName = document.getElementById('display-name');
     const logoutBtn = document.getElementById('logout-btn');
@@ -60,9 +61,27 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const user = usernameInput.value.trim();
-        if (user) {
-            login(user);
+        const pass = passwordInput.value;
+        
+        // --- STRICT VALIDATION LOGIC ---
+        // Validate Alphanumeric User
+        const userRegex = /^[a-zA-Z0-9]+$/;
+        if (!userRegex.test(user)) {
+            showToast('⚠️ Error: Usuario sólo debe contener letras o números.');
+            return;
         }
+        
+        // Validate Length
+        if (user.length < 4) {
+            showToast('⚠️ Error: Usuario muy corto (mínimo 4 caracteres).');
+            return;
+        }
+        if (pass.length < 6) {
+            showToast('⚠️ Error: Clave muy corta (mínimo 6 caracteres).');
+            return;
+        }
+
+        login(user);
     });
 
     logoutBtn.addEventListener('click', logout);
@@ -112,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             notes = [];
         }
-        renderNotes();
+        renderNotes(false);
     }
 
     function saveNotes() {
@@ -143,34 +162,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
         notes.unshift(newNote);
         saveNotes();
-        renderNotes();
+        
+        // Re-render and inject new note smoothly
+        renderNotes(true);
         
         showToast('Nota guardada');
         newNoteForm.reset();
         newNoteForm.classList.add('hidden-view');
     });
 
-    function deleteNote(id) {
-        notes = notes.filter(n => n.id !== id);
-        saveNotes();
-        renderNotes();
-        showToast('Nota eliminada');
+    // We expose this so DOM nodes can trigger delete smoothly
+    window.handleDeleteNote = function(id, nodeElem) {
+        // Trigger CSS exit animation
+        nodeElem.classList.add('slide-out');
+        
+        // Wait for Web Animations / Keyframe to complete
+        setTimeout(() => {
+            notes = notes.filter(n => n.id !== id);
+            saveNotes();
+            renderNotes(false);
+            showToast('Nota eliminada');
+        }, 300); // 300ms matches CSS Outwards Keyframe
     }
 
-    function renderNotes() {
+    function renderNotes(animatedInsert) {
         notesList.innerHTML = '';
         
         if (notes.length === 0) {
-            notesList.innerHTML = '<div class="empty-state">No hay notas todavía. ¡Crea la primera!</div>';
+            notesList.innerHTML = '<div class="empty-state delayed-fade">No hay notas todavía. ¡Crea la primera!</div>';
             return;
         }
 
-        notes.forEach(note => {
+        notes.forEach((note, index) => {
             const dateObj = new Date(note.date);
             const dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             
             const div = document.createElement('div');
-            div.className = 'note-item';
+            // Adding dynamic base classes. If it's a new insert and it's the very first element:
+            div.className = (animatedInsert && index === 0) ? 'note-item slide-in' : 'note-item';
             div.innerHTML = `
                 <div class="note-content">
                     <p>${escapeHTML(note.title)}</p>
@@ -184,7 +213,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             
             const delBtn = div.querySelector('.delete-btn');
-            delBtn.addEventListener('click', () => deleteNote(note.id));
+            delBtn.addEventListener('click', function() {
+                window.handleDeleteNote(note.id, div);
+            });
             
             notesList.appendChild(div);
         });
@@ -194,6 +225,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function showToast(msg) {
         toastElem.textContent = msg;
         toastElem.classList.remove('hidden');
+        toastElem.classList.remove('show');
+        
+        // Force reflow
+        void toastElem.offsetWidth; 
+        
         toastElem.classList.add('show');
         
         setTimeout(() => {
